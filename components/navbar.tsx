@@ -28,8 +28,21 @@ export function Navbar() {
     <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-black/70 backdrop-blur supports-[backdrop-filter]:bg-black/60">
       <div className="mx-auto max-w-6xl px-4 md:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-[#BBDEFB] to-[#E3F2FD] flex items-center justify-center shadow-sm">
-            <Star className="h-4 w-4 text-black" />
+          <div className="relative h-9 w-9 flex items-center justify-center">
+            <div
+              className="absolute inset-0 rounded-full opacity-80"
+              style={{
+                background:
+                  "radial-gradient(circle at center, rgba(255,255,255,0.35), rgba(187,222,251,0.22) 45%, rgba(187,222,251,0.08) 60%, transparent 75%)",
+                filter: "blur(6px)",
+              }}
+            />
+            <Star
+              className="relative h-6 w-6 text-white"
+              style={{
+                filter: "drop-shadow(0 0 10px rgba(255,255,255,.85)) drop-shadow(0 0 26px rgba(187,222,251,.35))",
+              }}
+            />
           </div>
           <span className="text-lg font-semibold tracking-tight text-white">{"StarGrader"}</span>
           <span className="sr-only">{"StarGrader Home"}</span>

@@ -1,11 +1,12 @@
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+export const fetchCache = "force-no-store"
+
 import { type NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { generateObject } from "ai"
 import { google, createGoogleGenerativeAI } from "@ai-sdk/google"
-
-// We’ll detect PDF/DOCX and extract text with pdf-parse and mammoth.
-import pdfParse from "pdf-parse"
-import mammoth from "mammoth"
 
 const ResultSchema = z.object({
   grade: z.string().describe("A short textual grade summary, e.g., 'Excellent', 'Strong', 'Adequate'."),
@@ -47,6 +48,8 @@ export async function POST(req: NextRequest) {
       const buf = Buffer.from(await file.arrayBuffer())
 
       if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
+        const pdfModule = await import("pdf-parse")
+        const pdfParse = (pdfModule as any).default ?? (pdfModule as any)
         const parsed = await pdfParse(buf)
         essayText = parsed.text?.trim() || ""
         if (!essayText) {
@@ -57,7 +60,9 @@ export async function POST(req: NextRequest) {
         file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
         file.name.toLowerCase().endsWith(".docx")
       ) {
-        const out = await mammoth.extractRawText({ buffer: buf })
+        const mammothModule = await import("mammoth")
+        const extractRawText = (mammothModule as any).extractRawText ?? (mammothModule as any).default?.extractRawText
+        const out = await extractRawText({ buffer: buf })
         essayText = out.value?.trim() || ""
         if (!essayText) {
           extractionWarning = "DOCX appears empty. Please ensure it contains text, or paste your essay directly."
